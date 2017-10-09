@@ -39,6 +39,11 @@ class Client
      */
     private $defaultOptions;
 
+    /**
+     * @var ResponseInterface
+     */
+    private $lastResponse;
+
     public function __construct($username, $password)
     {
         $this->username = $username;
@@ -48,14 +53,21 @@ class Client
     /**
      * @param string $method
      * @param string $uri
-     * @param array|null $options
-     * @return ResponseInterface
+     * @param array $options
+     * @return array
      */
-    public function doRequest($method, $uri, array $options = []) : ResponseInterface
+    public function doRequest($method, $uri, array $options = []) : array
     {
         $url = $this->baseUrl . $uri;
         $options = $this->getDefaultOptions()->resolve($options);
-        return $this->getHttpClient()->request($method, $url, $options);
+        $this->lastResponse = $this->getHttpClient()->request($method, $url, $options);
+        try {
+            $res = \GuzzleHttp\json_decode((string)$this->lastResponse->getBody());
+        } catch (\InvalidArgumentException $e) {
+            $res = ['error' => '['.$this->lastResponse->getStatusCode().'] The response body was not correctly formatted JSON. Inspect the last response to figure out the reason for this.'];
+        }
+
+        return $res;
     }
 
     /**
@@ -147,6 +159,7 @@ class Client
                     $this->password
                 ]
             ]);
+            $this->defaultOptions = $options;
         }
 
         return $this->defaultOptions;
