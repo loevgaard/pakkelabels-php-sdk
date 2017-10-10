@@ -145,7 +145,10 @@ class Client
         return $this;
     }
 
-    public function getDefaultOptions()
+    /**
+     * @return OptionsResolver
+     */
+    public function getDefaultOptions() : OptionsResolver
     {
         if(!$this->defaultOptions) {
             $options = new OptionsResolver();
@@ -165,6 +168,10 @@ class Client
         return $this->defaultOptions;
     }
 
+    /**
+     * @param OptionsResolver $optionsResolver
+     * @return Client
+     */
     public function setDefaultOptions(OptionsResolver $optionsResolver) : self
     {
         $this->defaultOptions = $optionsResolver;
