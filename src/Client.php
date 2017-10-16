@@ -3,6 +3,7 @@ namespace Loevgaard\Pakkelabels;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+use GuzzleHttp\RequestOptions;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -35,7 +36,7 @@ class Client
     private $baseUrl = 'https://app.pakkelabels.dk/api/public/v3';
 
     /**
-     * @var OptionsResolver
+     * @var array
      */
     private $defaultOptions;
 
@@ -48,6 +49,7 @@ class Client
     {
         $this->username = $username;
         $this->password = $password;
+        $this->defaultOptions = [];
     }
 
     /**
@@ -58,8 +60,11 @@ class Client
      */
     public function doRequest($method, $uri, array $options = []) : array
     {
+        $optionsResolver = new OptionsResolver();
+        $this->configureOptions($optionsResolver);
+
         $url = $this->baseUrl . $uri;
-        $options = $this->getDefaultOptions()->resolve($options);
+        $options = $optionsResolver->resolve(array_replace($this->defaultOptions, $options));
         $this->lastResponse = $this->getHttpClient()->request($method, $url, $options);
         try {
             $res = \GuzzleHttp\json_decode((string)$this->lastResponse->getBody());
@@ -141,40 +146,44 @@ class Client
      */
     public function setBaseUrl(string $baseUrl) : self
     {
-        $this->baseUrl = $baseUrl;
+        $this->baseUrl = rtrim($baseUrl, '/');
         return $this;
     }
 
     /**
-     * @return OptionsResolver
+     * @return array
      */
-    public function getDefaultOptions() : OptionsResolver
+    public function getDefaultOptions() : array
     {
-        if(!$this->defaultOptions) {
-            $options = new OptionsResolver();
-            $options->setDefaults([
-                'allow_redirects' => false,
-                'cookies' => false,
-                'timeout' => 60,
-                'http_errors' => false,
-                'auth' => [
-                    $this->username,
-                    $this->password
-                ]
-            ]);
-            $this->defaultOptions = $options;
-        }
-
         return $this->defaultOptions;
     }
 
     /**
-     * @param OptionsResolver $optionsResolver
+     * @param array $options
      * @return Client
      */
-    public function setDefaultOptions(OptionsResolver $optionsResolver) : self
+    public function setDefaultOptions(array $options) : self
     {
-        $this->defaultOptions = $optionsResolver;
+        $this->defaultOptions = $options;
         return $this;
+    }
+
+    protected function configureOptions(OptionsResolver $optionsResolver)
+    {
+        // add request options from Guzzle
+        $reflection = new \ReflectionClass(RequestOptions::class);
+        $optionsResolver->setDefined($reflection->getConstants());
+
+        // set defaults
+        $optionsResolver->setDefaults([
+            'allow_redirects' => false,
+            'cookies' => false,
+            'timeout' => 60,
+            'http_errors' => false,
+            'auth' => [
+                $this->username,
+                $this->password
+            ]
+        ]);
     }
 }

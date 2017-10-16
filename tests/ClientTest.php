@@ -3,7 +3,6 @@
 namespace Loevgaard\Pakkelabels;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ClientTest extends TestCase
 {
@@ -17,7 +16,9 @@ class ClientTest extends TestCase
     public function testGettersSetters()
     {
         $httpClient = new \GuzzleHttp\Client();
-        $defaultOptions = new OptionsResolver();
+        $defaultOptions = [
+            'test' => 'test'
+        ];
 
         $client = new Client('u', 'p');
         $client->setUsername('username')
@@ -37,7 +38,7 @@ class ClientTest extends TestCase
     public function testNoDefaultOptions()
     {
         $client = new Client('u', 'p');
-        $this->assertInstanceOf(OptionsResolver::class, $client->getDefaultOptions());
+        $this->assertSame([], $client->getDefaultOptions());
     }
 
     public function testNoHttpClient()
