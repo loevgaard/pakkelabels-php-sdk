@@ -67,7 +67,7 @@ class Client
         $options = $optionsResolver->resolve(array_replace($this->defaultOptions, $options));
         $this->lastResponse = $this->getHttpClient()->request($method, $url, $options);
         try {
-            $res = \GuzzleHttp\json_decode((string)$this->lastResponse->getBody());
+            $res = \GuzzleHttp\json_decode((string)$this->lastResponse->getBody(), true);
         } catch (\InvalidArgumentException $e) {
             $res = ['error' => '['.$this->lastResponse->getStatusCode().'] The response body was not correctly formatted JSON. Inspect the last response to figure out the reason for this.'];
         }
