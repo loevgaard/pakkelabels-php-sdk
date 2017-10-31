@@ -168,6 +168,24 @@ class Client
         return $this;
     }
 
+    /**
+     * @return ResponseInterface
+     */
+    public function getLastResponse(): ResponseInterface
+    {
+        return $this->lastResponse;
+    }
+
+    /**
+     * @param ResponseInterface $lastResponse
+     * @return Client
+     */
+    public function setLastResponse(ResponseInterface $lastResponse) : self
+    {
+        $this->lastResponse = $lastResponse;
+        return $this;
+    }
+
     protected function configureOptions(OptionsResolver $optionsResolver)
     {
         // add request options from Guzzle
