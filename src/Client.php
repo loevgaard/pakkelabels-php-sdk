@@ -75,6 +75,39 @@ class Client
         return $res;
     }
 
+    /******************
+     * Helper methods *
+     *****************/
+    /**
+     * Returns the number of pages in the collection
+     * Returns 0 if the header isn't set
+     *
+     * @return int
+     */
+    public function getPageCount() : int
+    {
+        if($this->lastResponse && $this->lastResponse->getHeaderLine('X-Total-Pages')) {
+            return (int)$this->lastResponse->getHeaderLine('X-Total-Pages');
+        }
+
+        return 0;
+    }
+
+    /**
+     * Returns the total item count in the collection
+     * Returns 0 if the header isn't set
+     *
+     * @return int
+     */
+    public function getItemCount() : int
+    {
+        if($this->lastResponse && $this->lastResponse->getHeaderLine('X-Total-Count')) {
+            return (int)$this->lastResponse->getHeaderLine('X-Total-Count');
+        }
+
+        return 0;
+    }
+
     /**
      * @return GuzzleClientInterface
      */
