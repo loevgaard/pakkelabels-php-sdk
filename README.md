@@ -25,10 +25,6 @@ $pakkelabelsClient = new Loevgaard\Pakkelabels\Client('api username', 'api passw
 $result = $pakkelabelsClient->doRequest('GET', 'method');
 ```
 
-## Change log
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
 ## Testing
 
 ``` bash
