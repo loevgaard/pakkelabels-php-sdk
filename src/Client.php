@@ -53,10 +53,11 @@ class Client
     }
 
     /**
-     * @param string $method
-     * @param string $uri
+     * @param $method
+     * @param $uri
      * @param array $options
      * @return array
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function doRequest($method, $uri, array $options = []) : array
     {
