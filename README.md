@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-A PHP SDK for the Pakkelabels API v3
+A PHP SDK for the [Pakkelabels API v3](https://app.pakkelabels.dk/api/public/v3/specification).
 
 ## Install
 
